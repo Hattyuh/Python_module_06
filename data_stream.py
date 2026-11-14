@@ -1,4 +1,5 @@
 import typing
+from data_pipeline import ExportPlugin
 from data_processor import (
         DataProcessor,
         NumericProcessor,
@@ -36,10 +37,18 @@ class DataStream:
             else:
                 print(f"{proc.__class__.__name__}: unused - no stats")
 
+    def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
+        for proc in self.procs:
+            data: list[tuple[int, str]] = []
+            for i in range(nb):
+                if proc.data:
+                    data.append(proc.output())
+            plugin.process_output(data)
+
 
 if __name__ == "__main__":
     print(
-        "=== Code Nexus - Data Pipeline ===\n"
+        "=== Code Nexus - Data Stream ===\n"
         "\nRegistering data processors..."
     )
     procs: list[DataProcessor] = [
