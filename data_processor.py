@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Any
 
 
 class DataProcessor(ABC):
     def __init__(self) -> None:
-        self.data: list[Any] = []
+        self.data: list[str] = []
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
@@ -17,26 +17,31 @@ class DataProcessor(ABC):
     def output(self) -> tuple[int, str]:
         if not self.data:
             raise IndexError("No data available")
-        result: Any = self.data.pop(0)
-        return (len(f"{result}"), f"{result}")
+        result: str = self.data.pop(0)
+        return (len(result), result)
 
 
 class NumericProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         if isinstance(data, list):
             for d in data:
+                if isinstance(d, bool):
+                    return False
                 if not isinstance(d, float | int):
                     return False
             return True
+        if isinstance(data, bool):
+            return False
         return isinstance(data, float | int)
 
     def ingest(self, data: Any) -> None:
         if not self.validate(data):
             raise ValueError("Data is invalid")
         if isinstance(data, list):
-            self.data.extend(data)
+            for d in data:
+                self.data.append(str(d))
         else:
-            self.data.append(data)
+            self.data.append(str(data))
 
 
 class TextProcessor(DataProcessor):
@@ -78,13 +83,14 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Data is invalid")
         if isinstance(data, list):
-            self.data.extend(data)
+            for d in data:
+                self.data.append(str(d))
         else:
-            self.data.append(data)
+            self.data.append(str(data))
 
 
 def processor_test(
-    processor_name: Callable,
+    processor_name: type[DataProcessor],
     test_values: list[Any]
 ) -> None:
     proc = processor_name()
@@ -109,11 +115,16 @@ def processor_test(
 
 
 if __name__ == "__main__":
+    print("=== Code Nexus - Data Processor ===")
     test_values: Any = [
         1, 2, 3, 4, 5,
         "one", "two", "tree", "four", "five",
         {"dog": "kutya"}, {"cat": "macska"}, {"cow": "tehen"}
     ]
-    procs: Callable = [NumericProcessor, TextProcessor, LogProcessor]
+    procs: list[type[DataProcessor]] = [
+        NumericProcessor,
+        TextProcessor,
+        LogProcessor
+    ]
     for element in procs:
         processor_test(element, test_values)
