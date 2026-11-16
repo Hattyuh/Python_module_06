@@ -11,7 +11,7 @@ class Creature(ABC):
         pass
 
     def describe(self) -> str:
-        return f"{self.c_name} is a {self.c_type} creature"
+        return f"{self.c_name} is a {self.c_type} type creature"
 
 
 class TransformCapability(ABC):
