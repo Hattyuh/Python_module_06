@@ -3,7 +3,7 @@ from .base import Creature, TransformCapability
 
 class Flameling(Creature):
     def __init__(self) -> None:
-        super.__init__("Flameling", "Fire")
+        super().__init__("Flameling", "Fire")
 
     def attack(self) -> str:
         return (f"{self.c_name} uses Ember")
@@ -11,11 +11,10 @@ class Flameling(Creature):
 
 class Pyrodon(Creature):
     def __init__(self) -> None:
-        super.__init__("Pyrodon", "Fire/Flying")
+        super().__init__("Pyrodon", "Fire/Flying")
 
     def attack(self) -> str:
         return (f"{self.c_name} uses Flamethrower")
-
 
 
 class Shiftling(Creature, TransformCapability):

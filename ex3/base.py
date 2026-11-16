@@ -25,7 +25,3 @@ class TransformCapability(ABC):
     @abstractmethod
     def revert(self) -> None:
         self.is_transformed = False
-
-
-if __name__ == "__main__":
-    print("Module test in progress")
