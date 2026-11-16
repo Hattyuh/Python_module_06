@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from creatures import Flameling, Pyrodon, Shiftling, Morphagon
+from .base import Creature
+from .creatures import Flameling, Pyrodon, Shiftling, Morphagon
 
 
 class CreatureFactory(ABC):
@@ -14,19 +15,15 @@ class CreatureFactory(ABC):
 
 class FlameFactory(CreatureFactory):
     def create_base(self) -> Creature:
+        return Flameling()
 
     def create_evolved(self) -> Creature:
+        return Pyrodon()
 
 
 class TransformCreatureFactory(CreatureFactory):
-    def create_base(self, creature_type: type[Creature]) -> Creature:
-        return creature_type("Shiftling", "Normal")
+    def create_base(self) -> Creature:
+        return Shiftling()
 
-    def create_evolved(self, creature_type: type[Creature]) -> Creature:
-        new_creature: Creature = creature_type("Morphagon", "Normal")
-        new_creature.transform()
-        return new_creature
-
-
-if __name__ == "__main__":
-    print("Module test is in progress")
+    def create_evolved(self) -> Creature:
+        return Morphagon()

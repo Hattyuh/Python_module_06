@@ -1,4 +1,4 @@
-from abilities import Creature, TransformCapability
+from .base import Creature, TransformCapability
 
 
 class Flameling(Creature):
@@ -25,13 +25,15 @@ class Shiftling(Creature, TransformCapability):
 
     def attack(self) -> str:
         if self.is_transformed:
-            return f"{self.c_name} uses special attack"
-        return f"{self.c_name} attacks normally"
+            return f"{self.c_name} performs a boosted strike!"
+        return f"{self.c_name} attacks normally."
 
     def transform(self) -> None:
+        print(self.c_name, " shifts into a sharper form!")
         super().transform()
 
     def revert(self) -> None:
+        print(self.c_name, " returns to normal.")
         super().revert()
 
 
@@ -42,15 +44,13 @@ class Morphagon(Creature, TransformCapability):
 
     def attack(self) -> str:
         if self.is_transformed:
-            return f"{self.c_name} uses special attack"
-        return f"{self.c_name} attacks normally"
+            return f"{self.c_name} unleashes a devastating morph strike!"
+        return f"{self.c_name} attacks normally."
 
     def transform(self) -> None:
+        print(self.c_name, " morphs into a dragonic battle form!")
         super().transform()
 
     def revert(self) -> None:
+        print(self.c_name, " stabilizes its form.")
         super().revert()
-
-
-if __name__ == "__main__":
-    print("Module test in progress")
