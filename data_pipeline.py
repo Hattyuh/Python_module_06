@@ -6,19 +6,28 @@ class ExportPlugin(Protocol):
         pass
 
 
-class CsvExporter(ExportPlugin):
+class CsvExporter:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("\nCSV Outout:")
-        print(','.join(d[1] for d in data))
+        values: list[str] = [d[1] for d in data]
+        for i, value in enumerate(values):
+            escaped: bool = False
+            if '"' in value:
+                values[i] = values[i].replace('"', '""')
+                values[i] = '"' + values[i] + '"'
+                escaped = True
+            if ("," in value or "\n" in value) and not escaped:
+                values[i] = f'"{value}"'
+        print(','.join(values))
 
 
-class JsonExporter(ExportPlugin):
+class JsonExporter:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         if data:
             print("\nJSON Output:")
             json: list[str] = []
-            for i, d in enumerate(data):
-                json.append(f'"item_{i}": "{d[1]}"')
+            for rank, value in data:
+                json.append(f'"item_{rank}": "{value}"')
             print("{", ','.join(json), "}")
 
 
@@ -48,10 +57,11 @@ if __name__ == "__main__":
     )
     test_values: list[Any] = [
         False, True,
-        1, 2, 3, 4, 5,
-        "one", "two", "three", "four",
+        1, 2, 3, 4, 5, 6, 7, 8,
+        "one", "two", "three", "four", "five", "six", "seven",
         {"sword": "sharp"}, {"six": "seven"},
-        {"hello": "there"}, {"black": "white"}
+        {"hello": "there"}, {"black": "white"},
+        {"yo": "lo"}, {"va", "lid"}
     ]
     print(
         "\nCreating data stream...\n"
@@ -61,6 +71,6 @@ if __name__ == "__main__":
     ds.process_stream(test_values)
     ds.print_processors_stats()
     print("\nConsuming elements...")
-    ds.output_pipeline(1, CsvExporter())
-    ds.output_pipeline(7, JsonExporter())
+    ds.output_pipeline(2, CsvExporter())
+    ds.output_pipeline(2, JsonExporter())
     ds.print_processors_stats()

@@ -78,5 +78,11 @@ if __name__ == "__main__":
     ds.print_processors_stats()
     print("\nConsuming elements...")
     for proc in ds.procs:
-        print(f"Element consumed from {type(proc).__name__}: {proc.output()}")
+        try:
+            print(
+                f"Element consumed from {type(proc).__name__}:",
+                proc.output()
+            )
+        except IndexError as error:
+            print(f"Element can not be consumed: {error}")
     ds.print_processors_stats()
