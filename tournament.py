@@ -22,8 +22,8 @@ def battle(
     )
     for j in range(opp_count - 1):
         print("\n  round:", j + 1)
-        creature1: Creature = opponents[j][0].create_base()
         for i in range(j + 1, opp_count):
+            creature1: Creature = opponents[j][0].create_base()
             creature2: Creature = opponents[i][0].create_base()
             print("\n* battle *")
             print(
