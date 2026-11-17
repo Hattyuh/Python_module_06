@@ -26,8 +26,7 @@ class DataProcessor(ABC):
     def output(self) -> tuple[int, str]:
         if not self.data:
             raise IndexError("No data available")
-        result: str = self.data.pop(0)
-        return (len(result), result)
+        return (self.processed_data - len(self.data), self.data.pop(0))
 
 
 class NumericProcessor(DataProcessor):
@@ -43,7 +42,7 @@ class NumericProcessor(DataProcessor):
             return False
         return isinstance(data, float | int)
 
-    def ingest(self, data: Any) -> None:
+    def ingest(self, data: float | int | list[int] | list[float]) -> None:
         super().ingest(data)
 
 
@@ -56,7 +55,7 @@ class TextProcessor(DataProcessor):
             return True
         return isinstance(data, str)
 
-    def ingest(self, data: Any) -> None:
+    def ingest(self, data: str | list[str]) -> None:
         super(). ingest(data)
 
 
@@ -77,7 +76,7 @@ class LogProcessor(DataProcessor):
                 return False
         return True
 
-    def ingest(self, data: Any) -> None:
+    def ingest(self, data: dict[str, str] | list[dict[str, str]]) -> None:
         super(). ingest(data)
 
 
@@ -86,30 +85,28 @@ def processor_test(
     test_values: list[Any]
 ) -> None:
     proc = processor_name()
-    print(
-        f"\nTesting {processor_name.__name__}\n"
-        f"Creating instance of {processor_name.__name__}\n"
-        f"Stored values: {proc.data}\n"
-        "\n"
-        "Testing values..."
-    )
+    print(f"\n== Testing {processor_name.__name__} ==")
     for value in test_values:
         try:
-            print(f" Trying to validate {value}: {proc.validate(value)}")
-            print(f"    Trying to ingest {value}")
+            print(f"Trying to validate '{value}': {proc.validate(value)}")
+            print(f"Trying to ingest without direct validation '{value}'")
             proc.ingest(value)
         except (ValueError, IndexError) as error:
             print(f"        {error}")
-    print(f"Stored values: {proc.data}")
+        print(f"Stored data in processor: {proc.data}\n")
     while proc.data:
-        print(proc.output())
-    print(f"Stored values: {proc.data}")
+        try:
+            data: Any = proc.output()
+            print(f"{processor_name.__name__} value {data[0]}: {data[1]}")
+        except IndexError as error:
+            print(error)
+
 
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Processor ===")
     test_values: Any = [
-        1, True,
+        1, 2, 3,
         [2, "two"],
         "one",
         {"dog": "kutya"}, {"cat": 1},
